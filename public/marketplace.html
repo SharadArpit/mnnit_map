@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MNNIT Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+      color: white;
+      min-height: 100vh;
+    }
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .marketplace-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .ad-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 20px;
+      height: 100%;
+    }
+    .ad-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    #adForm {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    #back-btn {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <button id="back-btn" class="btn btn-light"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+    
+    <div class="marketplace-container">
+      <h2 style="color: #333;">Campus Marketplace</h2>
+      
+      <!-- Ad Creation Form -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Post an Advertisement</h5>
+        </div>
+        <div class="card-body">
+          <form id="adForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="adTitle" class="form-label">Title*</label>
+                  <input type="text" class="form-control" id="adTitle" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="adCategory" class="form-label">Category*</label>
+                  <select class="form-select" id="adCategory" required>
+                    <option value="" selected disabled>Select category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="books">Books</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="adDescription" class="form-label">Description*</label>
+              <textarea class="form-control" id="adDescription" rows="3" required></textarea>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="adPrice" class="form-label">Price (₹)*</label>
+                  <input type="number" class="form-control" id="adPrice" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="adContact" class="form-label">Contact Info*</label>
+                  <input type="text" class="form-control" id="adContact" required>
+                </div>
+              </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Post Advertisement</button>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Ads Listing -->
+      <h5 class="mb-3" style="color: #333;">Current Listings</h5>
+      <div id="adsContainer" class="row">
+        <!-- Ads will be loaded here dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script src="marketplace.js"></script>
+</body>
+</html>

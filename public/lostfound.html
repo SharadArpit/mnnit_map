@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lost and Found | Smart Campus</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #444;
+    }
+
+    form, .filter-bar {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .entries {
+      max-width: 700px;
+      margin: 40px auto;
+    }
+
+    .entry {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-left: 5px solid #667eea;
+      border-radius: 6px;
+    }
+
+    .entry h3 {
+      margin: 0;
+      color: #333;
+    }
+
+    .entry small {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lost and Found</h1>
+
+  <!-- Form to add entries -->
+  <form id="lostfound-form">
+    <select id="type" required>
+      <option value="">Select Type</option>
+      <option value="lost">Lost</option>
+      <option value="found">Found</option>
+    </select>
+    <input type="text" id="item" placeholder="Item name" required />
+    <textarea id="description" placeholder="Description"></textarea>
+    <input type="text" id="location" placeholder="Where it was lost/found?" required />
+    <input type="text" id="contact" placeholder="Your contact (email/phone)" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <h3>Filter Entries</h3>
+    <select id="filter-type">
+      <option value="">All Types</option>
+      <option value="lost">Lost</option>
+      <option value="found">Found</option>
+    </select>
+    <input type="text" id="filter-item" placeholder="Search by item name" />
+    <input type="text" id="filter-location" placeholder="Search by location" />
+    <button onclick="applyFilters()">Apply Filters</button>
+    <button onclick="resetFilters()">Reset</button>
+  </div>
+
+  <div class="entries" id="entries"></div>
+
+  <script>
+    const form = document.getElementById('lostfound-form');
+    const entriesContainer = document.getElementById('entries');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const entry = {
+        type: document.getElementById('type').value,
+        item: document.getElementById('item').value,
+        description: document.getElementById('description').value,
+        location: document.getElementById('location').value,
+        contact: document.getElementById('contact').value,
+      };
+
+      await fetch('/lostfound', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry)
+      });
+
+      form.reset();
+      loadEntries();
+    });
+
+    async function loadEntries() {
+      const res = await fetch('/lostfound');
+      const entries = await res.json();
+      window.allEntries = entries; // Store for filtering
+      displayEntries(entries);
+    }
+
+    function displayEntries(entries) {
+      entriesContainer.innerHTML = '';
+      if (entries.length === 0) {
+        entriesContainer.innerHTML = '<p>No matching entries found.</p>';
+        return;
+      }
+      entries.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `
+          <h3>${entry.type.toUpperCase()}: ${entry.item}</h3>
+          <p>${entry.description || 'No description'}</p>
+          <small><strong>Location:</strong> ${entry.location}</small><br>
+          <small><strong>Contact:</strong> ${entry.contact}</small><br>
+          <small><strong>Posted:</strong> ${new Date(entry.timestamp).toLocaleString()}</small>
+        `;
+        entriesContainer.appendChild(div);
+      });
+    }
+
+    function applyFilters() {
+      const type = document.getElementById('filter-type').value.trim().toLowerCase();
+      const item = document.getElementById('filter-item').value.trim().toLowerCase();
+      const location = document.getElementById('filter-location').value.trim().toLowerCase();
+
+      const filtered = window.allEntries.filter(entry => {
+        return (!type || entry.type === type) &&
+               (!item || entry.item.toLowerCase().includes(item)) &&
+               (!location || entry.location.toLowerCase().includes(location));
+      });
+
+      displayEntries(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-type').value = '';
+      document.getElementById('filter-item').value = '';
+      document.getElementById('filter-location').value = '';
+      displayEntries(window.allEntries);
+    }
+
+    loadEntries();
+  </script>
+
+</body>
+</html>

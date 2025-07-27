@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI||'mongodb://127.0.0.1:27017/mnnit-map')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error(err));
 
@@ -588,11 +588,11 @@ app.get('/classroom/:id', (req, res) => {
 
 // Page Routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'dashboard.html'));
+    res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
 app.get('/marketplace', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'marketplace.html'));
+    res.sendFile(path.join(__dirname, 'public', 'marketplace.html'));
 });
 
 // Start Server

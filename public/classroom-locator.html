@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Classroom Locator</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    #map {
+      height: 500px;
+      margin-top: 20px;
+      border: 2px solid #666;
+      border-radius: 8px;
+    }
+    input {
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #556cd6;
+    }
+  </style>
+</head>
+<body>
+  <h2>Classroom Locator</h2>
+  <input id="room-input" placeholder="Enter Room (e.g., C-203)" />
+  <button onclick="locateClassroom()">Locate</button>
+
+  <div id="map"></div>
+
+  <script>
+    const map = L.map('map').setView([25.4920, 81.8639], 17);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+  
+    let classroomMarker = null;
+    let userMarker = null;
+    let userCircle = null;
+  
+    // 🔵 Get user's current real-time location
+    function trackUserLocation() {
+      if (!navigator.geolocation) {
+        alert("Geolocation not supported by your browser");
+        return;
+      }
+  
+      navigator.geolocation.watchPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+  
+          if (userMarker) {
+            userMarker.setLatLng([latitude, longitude]);
+            userCircle.setLatLng([latitude, longitude]);
+          } else {
+            userMarker = L.marker([latitude, longitude], {
+              title: "Your Location",
+              icon: L.icon({
+                iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                iconSize: [25, 25]
+              })
+            }).addTo(map).bindPopup("You are here");
+  
+            userCircle = L.circle([latitude, longitude], {
+              radius: 10,
+              color: 'blue',
+              fillColor: '#3f51b5',
+              fillOpacity: 0.3
+            }).addTo(map);
+          }
+        },
+        err => {
+          console.error("Geolocation error:", err);
+          alert("Unable to get your location");
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 10000,
+          timeout: 5000
+        }
+      );
+    }
+  
+    async function locateClassroom() {
+      const room = document.getElementById('room-input').value.trim().toUpperCase();
+      if (!room) return alert("Enter a room number");
+  
+      try {
+        const res = await fetch(`/classroom/${room}`);
+        if (!res.ok) throw new Error("Room not found");
+  
+        const data = await res.json();
+        const { lat, lng } = data.location;
+  
+        if (classroomMarker) map.removeLayer(classroomMarker);
+  
+        classroomMarker = L.marker([lat, lng]).addTo(map)
+          .bindPopup(`<b>${room}</b>`).openPopup();
+  
+        map.setView([lat, lng], 20);
+      } catch (err) {
+        alert("Room not found");
+        console.error(err);
+      }
+    }
+  
+    // 🔄 Start tracking on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      trackUserLocation();
+    });
+  </script>
+  
+</body>
+</html>
