@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // MongoDB Connection
-mongoose.connect('mongodb://127.0.0.1:27017/mnnit-map')
+mongoose.connect(process.env.MONGODB_URI||'mongodb://127.0.0.1:27017/mnnit-map')
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error(err));
 
