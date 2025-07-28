@@ -15,7 +15,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'mysecret';
 // Middleware
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
