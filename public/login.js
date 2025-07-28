@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("password").value;
 
         const endpoint = isLogin ? "/login" : "/signup";
-        const response = await fetch(`http://localhost:5001${endpoint}`, {
+        const response = await fetch(`https://www.mnnit-map-backend.onrender.com${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
